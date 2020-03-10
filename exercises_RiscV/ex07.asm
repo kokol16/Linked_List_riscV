@@ -5,11 +5,10 @@
 message: .asciz "insert a number >0\n"
 message2: .asciz "insert a number >=0\n"
 .text
+
 main:
 	#alocate dummy pointer
-	addi a7,zero ,9
-	addi a0,zero,8
-	ecall	
+	jal ra,node_alloc #call node_alloc()
 	
 	sw zero,0(a0)# dummy->data=0
 	sw zero , 4(a0) #dummy->ptr=0
@@ -21,14 +20,12 @@ main:
 	addi x17, x0, 4 # environment call code for print_string
  	la x10, message # pseudo-instruction: address of string
  	ecall 
-	addi a7,x0,5 #read intiger
- 	ecall 
+	jal ra,read_int#call read_int()
+	
+	
  loop:	bge x0, a0, after_loop
  	addi t1,a0,0#t1=intiger
- 	#allocate memory
- 	addi a7,zero ,9
-	addi a0,zero,8
-	ecall	
+ 	jal ra,node_alloc #call node_alloc()	
 	sw t1,0(a0)#p->data=input
 	sw zero ,4(a0)#p->next=0
 	sw a0, 4(s1)	#tail->next = p
@@ -38,16 +35,16 @@ main:
  	la x10, message # pseudo-instruction: address of string
  	ecall 
  	
- 	addi a7,x0,5 #read intiger
- 	ecall 
+ 	jal ra,read_int#call read_int()
+ 	
  	j loop
  	
 after_loop:
 	addi x17, x0, 4 # environment call code for print_string
  	la x10, message2 # pseudo-instruction: address of string
  	ecall 
-	addi a7,x0,5 #read intiger
- 	ecall
+	jal ra,read_int#call read_int()
+ 	
  	add s1,zero ,a0 
 if: 	bge s1, x0, then
 	
@@ -88,7 +85,17 @@ after_loop2:
 
 	j after_loop
 
-
+read_int:
+	addi a7,x0,5 #read intiger
+ 	ecall 
+	jr ra
+	
+node_alloc:
+	#allocate memory
+ 	addi a7,zero ,9
+	addi a0,zero,8
+	ecall
+	jr ra
 
 
 
