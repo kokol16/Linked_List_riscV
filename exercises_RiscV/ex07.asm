@@ -36,7 +36,6 @@ main:
  	ecall 
  	
  	jal ra,read_int#call read_int()
- 	
  	j loop
  	
 after_loop:
@@ -44,7 +43,6 @@ after_loop:
  	la x10, message2 # pseudo-instruction: address of string
  	ecall 
 	jal ra,read_int#call read_int()
- 	
  	add s1,zero ,a0 
 if: 	bge s1, x0, then
 	
@@ -56,34 +54,11 @@ then:
 	add s2,s0,zero		#s2=head
 	lw t1,0(s2)
 	lw t2,4(s2)
-	
-	
-loop2:  beq t2,x0,after_loop2
-	#iterate the list
-	lw t1,0(s2)
-	lw t2,4(s2)
-	#lw t2, 0(s1)
-if2: 	bgt  t1 ,s1,then2 
-	j test
-
-then2:	
-	#print intiger
-	addi x17, x0, 1 # environment call code for print_intiger
-	lw t3,0(s2)
-	add a0 ,zero,t3
-	
- 	ecall 
- 	j test
-	
-	
-test: 
-	#lw t4,4(s2)
-	#add s2,t4,zero #p=p->next
-	lw s2, 4(s2)
-	j loop2
-after_loop2:
-
-	j after_loop
+	add a0,s0,zero#first argument for search list
+	add a1,s1,zero#second argument for search list
+	jal ra,search_list#call search_list()
+ 
+#======================================END=================Main====================================================================
 
 read_int:
 	addi a7,x0,5 #read intiger
@@ -96,9 +71,49 @@ node_alloc:
 	addi a0,zero,8
 	ecall
 	jr ra
+	
 
+	
+	
+search_list:
+	add t2, x0, s2
+	
+loop2:  beq t2,x0,after_loop2
+	#iterate the list
+	#lw t1,0(s2)#p->data
+	add t1, x0, t2
+	add a0, x0, t1
+	jal ra,print_node#call print_node()
+	lw t2,4(t2)#P->next
+	#add a0,zero,s0
+	
+	j loop2
+	#lw t2, 0(s1)
 
+after_loop2:
 
+	j after_loop
 
+	
+	
+print_node:
+#a0 pointer adress,s0
+#a1 intiger that we compare
+	lw t1,0(a0) #p->data
+if2: 	bgt  t1 ,a1,then2 	
+	j test
 
+then2:		
+	#print intiger
+	addi x17, x0, 1 # environment call code for print_intiger
+	#lw t3,0(s2)
+		
+	add a0 ,zero,t1
+ 	ecall 
+test:	jr ra
+	
+#test: 
+	
+#	lw a0, 4(a0)#p=p->next
+	
 	
