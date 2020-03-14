@@ -3,7 +3,7 @@
 .data
 
 message: .asciz "insert a number >0\n"
-message2: .asciz "insert a number >=0\n"
+message2: .asciz "\ninsert a number >=0\n"
 .text
 
 main:
