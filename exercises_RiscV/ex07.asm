@@ -1,9 +1,10 @@
-		#s0 ->head
-		#s1 ->tail
+	#s0 ->head
+	#s1 ->tail
 .data
 
 message: .asciz "insert a number >0\n"
 message2: .asciz "\ninsert a number >=0\n"
+str_space: .asciz " "
 .text
 
 main:
@@ -80,16 +81,14 @@ search_list:
 	
 loop2:  beq t2,x0,after_loop2
 	#iterate the list
-	#lw t1,0(s2)#p->data
 	add t1, x0, t2
-	add a0, x0, t1
+	add a0, x0, t1#argument for print_node a0=p
 	jal ra,print_node#call print_node()
-	lw t2,4(t2)#P->next
+	lw t2,4(t2)#p=P->next
 	#add a0,zero,s0
 	
 	j loop2
-	#lw t2, 0(s1)
-
+	
 after_loop2:
 
 	j after_loop
@@ -100,20 +99,18 @@ print_node:
 #a0 pointer adress,s0
 #a1 intiger that we compare
 	lw t1,0(a0) #p->data
-if2: 	bgt  t1 ,a1,then2 	
+if2: 	bgt  t1 ,a1,then2 	#p->data > input
 	j test
 
 then2:		
 	#print intiger
-	addi x17, x0, 1 # environment call code for print_intiger
-	#lw t3,0(s2)
-		
+	addi x17, x0, 1 # environment call code for print_intiger	
 	add a0 ,zero,t1
  	ecall 
+ 	addi x17, x0, 4 # environment call code for print_string
+ 	la x10, str_space # pseudo-instruction: address of string
+ 	ecall 
+ 	
+ 	
 test:	jr ra
-	
-#test: 
-	
-#	lw a0, 4(a0)#p=p->next
-	
 	
